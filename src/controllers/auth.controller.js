@@ -8,13 +8,13 @@ const registerUser = async(req,res)=>{
 
     const isUserAlreadyExists = await userModel.findOne({
         $or:[
-            username,
-            email
+            {username},
+            {email}
         ]
     });
 
     if(isUserAlreadyExists){
-        res.status(409).json({message:'User already exists'});
+       return res.status(409).json({message:'User already exists'});
     }
 
     const hash = await bcrypt.hash(password,10);
@@ -31,7 +31,7 @@ const registerUser = async(req,res)=>{
         role:user.role
     },process.env.JWT_SECRET)
 
-    const cookies= ("token",token);
+    res.cookie("token",token);
 
     res.status(201).json({
         message:"Welcome to Spotify!",
@@ -45,3 +45,7 @@ const registerUser = async(req,res)=>{
     })
 
 }
+
+
+
+module.exports =  {registerUser};
